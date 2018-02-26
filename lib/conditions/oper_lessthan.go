@@ -2,7 +2,7 @@
 * Copyright © 2017. TIBCO Software Inc.
 * This file is subject to the license terms contained
 * in the license file that is distributed with this file.
-*/
+ */
 package condition
 
 import (
@@ -23,7 +23,7 @@ this is a numeric operator that evaluates if a given number is less than another
 e.g. ${trigger.content.amount < 20}
 */
 var infoLess = &OperatorInfo{
-	Names:       []string{"<"},
+	Names:       []string{"less", "<"},
 	Description: `Support for 'less than' numerical operation to be used in the conditions`,
 }
 

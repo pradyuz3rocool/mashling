@@ -2,7 +2,7 @@
 * Copyright © 2017. TIBCO Software Inc.
 * This file is subject to the license terms contained
 * in the license file that is distributed with this file.
-*/
+ */
 package condition
 
 import (
@@ -19,19 +19,19 @@ import (
 func GetOperatorInExpression(expression string) (*Operator, *string, error) {
 	var oper *Operator
 	var operatorName *string
-	names, _ := OperatorRegistry.Operators()
+	names := OperatorRegistry.names
 	for _, name := range names {
 		// Find words in the expression that *start* with operator
-		pattern := `\b` + " " + name + " "
+		pattern := `\b` + " " + name.Name + " "
 		r, _ := regexp.Compile(pattern)
 
 		if r.MatchString(expression) {
-			op, exists := OperatorRegistry.Operator(name)
+			op, exists := OperatorRegistry.Operator(name.Name)
 			if !exists {
 				continue
 			} else {
 				oper = &op
-				operatorName = &name
+				operatorName = &name.Name
 				break
 			}
 		}
@@ -82,25 +82,16 @@ func ValidateOperatorInExpression(expression string) {
 
 	expression = strings.TrimSpace(expression)
 
-	operFound := false
-	names, _ := OperatorRegistry.Operators()
+	names, operFound := OperatorRegistry.names, false
 	for _, name := range names {
 		// Find words in the expression that *start* with operator
-		pattern := `\b` + " " + name + " "
+		pattern := `\b` + " " + name.Name + " "
 		r, _ := regexp.Compile(pattern)
 
 		if r.MatchString(expression) {
-			_, exists := OperatorRegistry.Operator(name)
-			if !exists {
-				continue
-			} else {
-				if !operFound {
-					operFound = true
-				} else {
-					//already one operator was found in the expression. here's another!
-					//multiple operators are not allowed in a single expression
-					panic(fmt.Errorf("Multiple operators not allowed in expression: [%v]", originalExpression))
-				}
+			if _, exists := OperatorRegistry.Operator(name.Name); exists {
+				operFound = true
+				break
 			}
 		}
 	}

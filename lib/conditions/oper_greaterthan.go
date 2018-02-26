@@ -2,7 +2,7 @@
 * Copyright © 2017. TIBCO Software Inc.
 * This file is subject to the license terms contained
 * in the license file that is distributed with this file.
-*/
+ */
 package condition
 
 import (
@@ -23,7 +23,7 @@ this is a numeric operator that evaluates if a given number is greater than anot
 e.g. ${trigger.content.amount > 20}
 */
 var infoGreater = &OperatorInfo{
-	Names:       []string{">"},
+	Names:       []string{"greater", ">"},
 	Description: `Support for 'greater than' numerical operation to be used in the conditions`,
 }
 

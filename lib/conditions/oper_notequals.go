@@ -2,7 +2,7 @@
 * Copyright © 2017. TIBCO Software Inc.
 * This file is subject to the license terms contained
 * in the license file that is distributed with this file.
-*/
+ */
 package condition
 
 import (
@@ -23,7 +23,7 @@ this is a string (alphanumeric) equality operator.
 e.g. ${trigger.content.country != USA}
 */
 var infoNotEquals = &OperatorInfo{
-	Names:       []string{"!=", "notequals"},
+	Names:       []string{"notequals", "!="},
 	Description: `Support for not-equals operation to be used in the conditions`,
 }
 

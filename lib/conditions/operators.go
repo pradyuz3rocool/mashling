@@ -2,12 +2,13 @@
 * Copyright © 2017. TIBCO Software Inc.
 * This file is subject to the license terms contained
 * in the license file that is distributed with this file.
-*/
+ */
 package condition
 
 import (
 	"errors"
 	"fmt"
+	"sort"
 	"strings"
 	"sync"
 
@@ -42,15 +43,37 @@ type Operator interface {
 	Eval(lhs string, rhs string) bool
 }
 
+// Name is the name of an operator
+type Name struct {
+	Priority int
+	Name     string
+}
+
 // OperRegistry is a registry for condition operators
 type OperRegistry struct {
 	operatorsMu sync.Mutex
 	operators   map[string]Operator
+	names       []Name
 }
 
 // NewOperatorRegistry creates a new operator registry
 func NewOperatorRegistry() *OperRegistry {
 	return &OperRegistry{operators: make(map[string]Operator)}
+}
+
+// Len return the length of names
+func (r *OperRegistry) Len() int {
+	return len(r.names)
+}
+
+// Swap swaps two names
+func (r *OperRegistry) Swap(i, j int) {
+	r.names[i], r.names[j] = r.names[j], r.names[i]
+}
+
+// Less return true if the priority of one name is less than the other
+func (r *OperRegistry) Less(i, j int) bool {
+	return r.names[i].Priority < r.names[j].Priority
 }
 
 // RegisterOperator registers an operator
@@ -64,14 +87,19 @@ func (r *OperRegistry) RegisterOperator(operator Operator) {
 
 	operatorNames := operator.OperatorInfo().Names
 
-	for _, name := range operatorNames {
+	for i, name := range operatorNames {
 		if _, exists := r.operators[name]; exists {
 			panic("OperatorRegistry: operator [" + name + "] already registered")
 		}
 
 		r.operators[name] = operator
+		n := Name{
+			Priority: i,
+			Name:     name,
+		}
+		r.names = append(r.names, n)
 	}
-
+	sort.Sort(r)
 }
 
 // Operator gets the specified operator
